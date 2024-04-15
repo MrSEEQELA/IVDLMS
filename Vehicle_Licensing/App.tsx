@@ -1,7 +1,7 @@
-// import * as React from 'react'; // Commented out to avoid importing the entire React library
+
 import React from 'react'; // Importing React to use JSX syntax
-import { NavigationContainer, NavigationProp } from '@react-navigation/native'; // Importing NavigationContainer and NavigationProp from @react-navigation/native package
-import { createStackNavigator, RouteProp } from '@react-navigation/stack'; // Importing createStackNavigator and RouteProp from @react-navigation/stack package
+import { NavigationContainer, NavigationProp } from '@react-navigation/native'; 
+import { createStackNavigator, RouteProp } from '@react-navigation/stack';
 import { View, Button, TextInput, TouchableOpacity, Text } from 'react-native'; // Importing necessary components from react-native package
 import RegisterScreen from './Register'; // Importing RegisterScreen component
 import RenewalScreen from './Renewal'; // Importing RenewalScreen component

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import VehicleInfo from './VehicleInfo'; // Correct casing
 import { View, TextInput, Button, Text, StyleSheet, Picker } from 'react-native';
 import axios from 'axios';
 
@@ -14,21 +15,27 @@ const PersonalInfoScreen = ({ navigation }) => {
   const [representationIdentificationNumber, setRepresentationIdentificationNumber] = useState('');
   const [vehicleIdentificationNumber, setVehicleIdentificationNumber] = useState('');
 
-  const navigateToVehicleInfo = async () => {
-    try {
-      const response = await axios.post('http://localhost:/personal_info', {
-        ownerIdentificationType,
-        ownerIdentificationNumber,
-        ownerName,
-        ownerSurname,
-        ownerAddress,
-        ownerContacts,
-        ownerEmail,
-        proxyIdentificationNumber,
-        representationIdentificationNumber,
-        vehicleIdentificationNumber,
-      });
-      console.log(response.data); // Assuming the response contains a success message
+const navigateToVehicleInfo = async () => {
+  try {
+    const response = await axios.post('http://localhost:3001/personal_info', {
+      ownerIdentificationType,
+      ownerIdentificationNumber,
+      ownerName,
+      ownerSurname,
+      ownerAddress,
+      ownerContacts,
+      ownerEmail,
+      proxyIdentificationNumber,
+      representationIdentificationNumber,
+      vehicleIdentificationNumber,
+    });
+    console.log(response.data); // Assuming the response contains a success message
+
+    // Check if response indicates success (you may need to adjust this condition based on your server response)
+    if (response.status === 200) {
+      // Assuming the server response contains a success message
+      alert('Personal info stored successfully'); // Display a success message
+      // Navigate to the VehicleInfo screen
       navigation.navigate('VehicleInfo', {
         ownerIdentificationType,
         ownerIdentificationNumber,
@@ -41,11 +48,18 @@ const PersonalInfoScreen = ({ navigation }) => {
         representationIdentificationNumber,
         vehicleIdentificationNumber,
       });
-    } catch (error) {
-      console.error('Error storing personal info:', error);
-      // Handle error here
+    } else {
+      // Handle other status codes or error conditions
+      alert('Failed to store personal info'); // Display an error message
     }
-  };
+  } catch (error) {
+    console.error('Error storing personal info:', error);
+    // Handle error here
+    alert('Error storing personal info. Please try again.'); // Display an error message
+  }
+};
+
+
 
   return (
     <View style={styles.container}>
