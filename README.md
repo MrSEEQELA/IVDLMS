@@ -51,57 +51,77 @@ PostgreSQL installed and running
 
 **Steps**
 Clone the repository:
+
   $git clone https://github.com/yourusername/ivdlms.git
+  
   $cd ivdlms
 
 Backend Setup:
 
 Navigate to the backend directory:
+
   $cd backend
 Navigate to each folder 
 Install the dependencies:
+
   $npm install
 
 Frontend Setup:
 Navigate to the frontend directory:
+
   $cd ivdlms
 Install the dependencies:
+
   $npm install
 
 Gateway Setup:
 Navigate to the gateway directory:
+
 cd backend/API-Gateway-Server
 Build the gateway using Maven:
+
   $mvn clean install
   
 Eureka Discovery Server Setup:
 Navigate to the discovery server directory:
+
   $cd Discovery-Server
 Build the discovery server using Maven:
+
   $mvn clean install
 
 Build the entire project:
 Navigate to the root directory and build the project using Maven:
+
   $mvn clean install
 
 **Usage**
 To run the project locally, follow these steps:
 
 Start the Eureka Discovery Server:
+
   $cd discovery-server
+  
   $mvn spring-boot:run
 
 Start the Gateway:
+
   $cd gateway
+  
   $mvn spring-boot:run
 
 Start the Backend:
+
   $cd backend
+  
   $npm start
 
 Start the Frontend:
+
   $cd frontend
+  
   $npx expo start 
+  
   Then click "w" to run on the web.
 
 Access the Application:
@@ -113,6 +133,7 @@ To run the project using Docker, follow these steps:
 
 Build and run Docker containers:
 Run this on the root of the project
+
   $docker-compose up --build
 
 Access the Application:
