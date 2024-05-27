@@ -1,0 +1,9 @@
+{
+    "expo": {
+      "sdkVersion": "42.0.0",
+      "packagerOpts": {
+        "port": 3000
+      }
+    }
+  }
+  

@@ -1,0 +1,323 @@
+CREATE TABLE vehicle_info (
+    registration_number VARCHAR(255) PRIMARY KEY,
+    make VARCHAR(255) NOT NULL,
+    series_name VARCHAR(255) NOT NULL,
+    vehicle_category VARCHAR(255) NOT NULL,
+    driven VARCHAR(255) NOT NULL,
+    vehicle_description TEXT NOT NULL,
+    net_power_and_engine_capacity VARCHAR(255) NOT NULL,
+    fuel_type VARCHAR(255) NOT NULL,
+    tare_and_gross_vehicle_mass VARCHAR(255) NOT NULL,
+    permissible_v_mass VARCHAR(255) NOT NULL,
+    drawing_v_mass VARCHAR(255) NOT NULL,
+    transmission VARCHAR(255) NOT NULL,
+    colour VARCHAR(255) NOT NULL,
+    transpotation_of VARCHAR(255) NOT NULL,
+    economic_sector VARCHAR(255) NOT NULL,
+    v_street_address VARCHAR(255) NOT NULL,
+    ownership VARCHAR(255) NOT NULL
+);
+
+
+
+
+
+CREATE TABLE vehicle_info (
+    chasisnumber VARCHAR(255) PRIMARY KEY,
+    make VARCHAR(255) NOT NULL,
+    series_name VARCHAR(255) NOT NULL,
+    vehicle_category VARCHAR(255) NOT NULL,
+    driven VARCHAR(255) NOT NULL,
+    vehicle_description TEXT NOT NULL,
+    net_power_and_engine_capacity VARCHAR(255) NOT NULL,
+    fuel_type VARCHAR(255) NOT NULL,
+    tare_and_gross_vehicle_mass VARCHAR(255) NOT NULL,
+    permissible_v_mass VARCHAR(255) NOT NULL,
+    drawing_v_mass VARCHAR(255) NOT NULL,
+    transmission VARCHAR(255) NOT NULL,
+    colour VARCHAR(255) NOT NULL,
+    transpotation_of VARCHAR(255) NOT NULL,
+    economic_sector VARCHAR(255) NOT NULL,
+    v_street_address VARCHAR(255) NOT NULL,
+    ownership VARCHAR(255) NOT NULL,
+    identification_number VARCHAR(20) REFERENCES personal_info(identification_number)
+);
+
+CREATE TABLE personal_info (
+    identification_type VARCHAR(100),
+    identification_number VARCHAR(20) PRIMARY KEY,
+    name VARCHAR(100),
+    surname VARCHAR(100),
+    address VARCHAR(255),
+    contacts VARCHAR(100),
+    email VARCHAR(100),
+    password VARCHAR(100),
+    d_o_b DATE
+);
+
+
+
+INSERT INTO vehicle_info (
+    chasisnumber,
+    make,
+    series_name,
+    vehicle_category,
+    driven,
+    vehicle_description,
+    net_power_and_engine_capacity,
+    fuel_type,
+    tare_and_gross_vehicle_mass,
+    permissible_v_mass,
+    drawing_v_mass,
+    transmission,
+    colour,
+    transpotation_of,
+    economic_sector,
+    v_street_address,
+    ownership
+    identification_number
+) VALUES (
+    'ABC123',                  -- chasis_number
+    'Toyota',                  -- make
+    'Corolla',                 -- series_name
+    'Sedan',                   -- vehicle_category
+    'Self-propelled',          -- driven
+    'Description of the vehicle', -- vehicle_description
+    '1500cc',                  -- net_power_and_engine_capacity
+    'Petrol',                  -- fuel_type
+    '2000 kg',                 -- tare_and_gross_vehicle_mass
+    '1800 kg',                 -- permissible_v_mass
+    '1500 kg',                 -- drawing_v_mass
+    'Automatic',               -- transmission
+    'Red',                     -- colour
+    'Goods',                   -- transpotation_of
+    'Transport',               -- economic_sector
+    '123 Street, City',        -- v_street_address
+    'Private'                  -- ownership
+    '12345'                    -- identification_number
+);
+
+
+CREATE TABLE (
+  identification_type,
+  identification_number,
+  name,
+  surname,
+  D-O-B,
+  address,
+  contacts,
+  email,
+  password VARCHAR(255) NOT NULL CHECK (LENGTH(password) >= 8)
+);
+
+
+
+
+
+
+
+INSERT INTO your_table_name (
+  owner_identification_type,
+  owner_identification_number,
+  owner_name,
+  owner_surname,
+  owner_address,
+  owner_contacts,
+  owner_email,
+  proxy_identification_number,
+  representation_identification_number,
+  vehicle_identification_number
+) VALUES (
+  'Traffic Registration No.',
+  '12345',
+  'John',
+  'Doe',
+  '123 Main Street',
+  '555-123-4567',
+  'john@example.com',
+  '67890',
+  'ABCDE',
+  'XYZ123'
+);
+
+
+
+
+DELETE FROM personal_info
+WHERE identification_number NOT IN (
+    SELECT MIN(identification_number)
+    FROM personal_info
+    WHERE identification_number IS NOT NULL
+    GROUP BY identification_number
+);
+
+
+
+CREATE OR REPLACE FUNCTION fill_registration()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Insert into registration table when vehicle_info is inserted
+    IF TG_TABLE_NAME = 'vehicle_info' AND TG_OP = 'INSERT' THEN
+        INSERT INTO Registration (registrationnumber, chasisnumber, identification_number, issueDate, expireDate, Status)
+        VALUES (
+            NEW.chasisnumber || '-' || NEW.identification_number,
+            NEW.chasisnumber,
+            NEW.identification_number,
+            CURRENT_DATE,
+            CURRENT_DATE + INTERVAL '1 year',
+            CASE WHEN CURRENT_DATE <= CURRENT_DATE + INTERVAL '1 year' THEN 'Up-To-Date' ELSE 'Expired' END
+        );
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE TRIGGER fill_registration_trigger
+AFTER INSERT ON vehicle_info
+FOR EACH ROW
+EXECUTE FUNCTION fill_registration();
+
+
+
+DROP TRIGGER IF EXISTS fill_registration ON personal_info;
+DROP TRIGGER IF EXISTS fill_registration ON vehicle_info;
+
+
+
+ALTER TABLE personal_info DROP COLUMN id;
+
+ALTER TABLE personal_info
+ADD PRIMARY KEY (identification_number);
+
+
+ALTER TABLE vehicle_info ADD COLUMN identification_number VARCHAR(255);
+ALTER TABLE vehicle_info ADD CONSTRAINT identification_number FOREIGN KEY (identification_number) REFERENCES personal_info (identification_number); 
+
+
+
+
+
+
+ALTER TABLE vehicle_info RENAME COLUMN registrationnumber TO chasisnumber;
+
+
+ALTER TABLE personal_info RENAME COLUMN owner_identification_type TO identification_type;
+
+ALTER TABLE personal_info RENAME COLUMN owner_identification_number TO identification_number;
+
+ALTER TABLE personal_info RENAME COLUMN owner_name TO name;
+
+ALTER TABLE personal_info RENAME COLUMN owner_surname TO surname;
+
+ALTER TABLE personal_info RENAME COLUMN owner_address TO address;
+
+ALTER TABLE personal_info RENAME COLUMN owner_contacts TO contacts;
+
+ALTER TABLE personal_info RENAME COLUMN owner_email TO email;
+
+ALTER TABLE personal_info DROP COLUMN proxy_identification_number;
+
+ALTER TABLE personal_info DROP COLUMN representation_identification_number;
+
+ALTER TABLE personal_info DROP COLUMN vehicle_identification_number;
+
+ALTER TABLE personal_info ADD COLUMN D_O_B DATE NOT NULL;
+
+
+
+CREATE TABLE Registration (
+    registrationnumber VARCHAR(50) PRIMARY KEY,
+    chasisnumber VARCHAR(20) REFERENCES vehicle_info(chasisnumber),
+    identification_number VARCHAR(20) REFERENCES personal_info(identification_number),
+    issueDate DATE,
+    expireDate DATE,
+    Status VARCHAR(20)
+);
+
+
+CREATE TABLE changes (
+    change_id SERIAL PRIMARY KEY,
+    chasisnumber VARCHAR(20) REFERENCES vehicle_info(chasisnumber),
+    identification_number VARCHAR(20) REFERENCES personal_info(identification_number),
+    colour VARCHAR(25),
+    vStreetAddress VARCHAR(255),
+    date DATE
+);
+
+
+
+-- First, create the trigger function
+CREATE OR REPLACE FUNCTION save_old_vehicle_info()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Insert old values into changes table with the current date
+    IF OLD.identification_number <> NEW.identification_number THEN
+        INSERT INTO changes (chasisnumber, identification_number, date)
+        VALUES (OLD.chasisnumber, OLD.identification_number, CURRENT_DATE);
+    END IF;
+    
+    IF OLD.colour <> NEW.colour THEN
+        INSERT INTO changes (chasisnumber, colour, date)
+        VALUES (OLD.chasisnumber, OLD.colour, CURRENT_DATE);
+    END IF;
+    
+    IF OLD.v_street_address <> NEW.v_street_address THEN
+        INSERT INTO changes (chasisnumber, v_street_address, date)
+        VALUES (OLD.chasisnumber, OLD.v_street_address, CURRENT_DATE);
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Finally, create the trigger on vehicle_info table
+CREATE TRIGGER vehicle_info_update_trigger
+BEFORE UPDATE ON vehicle_info
+FOR EACH ROW
+EXECUTE FUNCTION save_old_vehicle_info();
+
+
+
+
+
+
+INSERT INTO personal_info (identification_type, identification_number, name, surname, address, contacts, email, password, d_o_b)
+VALUES 
+('Lesotho-ID', '012345678912', 'John', 'Doe', '123 Main St', '51421234', 'john.doe@example.com', '12345678', '1980-01-01'),
+('Lesotho-ID', '021987654321', 'Jane', 'Smith', '456 Elm St', '52555678', 'jane.smith@example.com', '12345678', '1985-05-05');
+
+
+
+INSERT INTO vehicle_info (chasisnumber, make, series_name, vehicle_category, driven, vehicle_description, net_power_and_engine_capacity, fuel_type, tare_and_gross_vehicle_mass, permissible_v_mass, drawing_v_mass, transmission, colour, transpotation_of, economic_sector, v_street_address, ownership, identification_number)
+VALUES
+('CH123456789', 'Toyota', 'Corolla', 'Sedan', 'Yes', 'A reliable sedan.', '1.8L 140HP', 'Petrol', '1300kg', '1700kg', '1500kg', 'Automatic', 'Blue', 'Goods', 'Private', '789 Pine St', 'Owned', '012345678912'),
+('CH987654321', 'Honda', 'Civic', 'Sedan', 'Yes', 'A compact sedan.', '2.0L 158HP', 'Petrol', '1200kg', '1600kg', '1400kg', 'Manual', 'Red', 'Passengers', 'Commercial', '123 Oak St', 'Leased', '021987654321');
+
+
+
+
+CREATE TABLE coordinator (
+    employment_id INT PRIMARY KEY NOT NULL,
+    name VARCHAR(25),
+    surname VARCHAR(25),
+    department VARCHAR(50)
+);
+
+CREATE TABLE practicalscore (
+    id SERIAL PRIMARY KEY,
+    applicant_national_id VARCHAR(20) NOT NULL,
+    coordinator_id INTEGER NOT NULL,
+    score INTEGER NOT NULL CHECK (score >= 0 AND score <= 10),
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (applicant_national_id) REFERENCES applicant(national_id),
+    FOREIGN KEY (coordinator_id) REFERENCES coordinator(employment_id)
+);
+
+
+
+
+
+

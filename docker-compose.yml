@@ -1,0 +1,136 @@
+version: '3.8'
+services:
+  discovery-server:
+    build: ./backend/Discovery-Server
+    container_name: discovery-server
+    networks:
+      - microservices-network
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  api-gateway:
+    build: ./backend/API-Gateway-Server
+    container_name: api-gateway
+    networks:
+      - microservices-network
+    ports:
+      - "8080:8080"
+    depends_on:
+      - discovery-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker
+
+  microservice1:
+    build: ./backend/Driver
+    container_name: driver
+    networks:
+      - microservices-network
+    depends_on:
+      - discovery-server
+      - postgres
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/drivers
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=''
+      - SPRING_PROFILES_ACTIVE=docker
+
+  microservice2:
+    build: ./backend/Personal_info
+    container_name: personal_info
+    networks:
+      - microservices-network
+    depends_on:
+      - discovery-server
+      - postgres
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/personal_info
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=''
+      - SPRING_PROFILES_ACTIVE=docker
+
+  microservice3:
+    build: ./backend/Registration
+    container_name: registration
+    networks:
+      - microservices-network
+    depends_on:
+      - discovery-server
+      - postgres
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/drivers
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=''
+      - SPRING_PROFILES_ACTIVE=docker
+      
+  microservice4:
+    build: ./backend/Test
+    container_name: test
+    networks:
+      - microservices-network
+    depends_on:
+      - discovery-server
+      - postgres
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/drivers
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=''
+      - SPRING_PROFILES_ACTIVE=docker      
+
+  microservice5:
+    build: ./backend/Vehicle_info
+    container_name: vehicle_info
+    networks:
+      - microservices-network
+    depends_on:
+      - discovery-server
+      - postgres
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/vehicles
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=''
+      - SPRING_PROFILES_ACTIVE=docker
+
+  frontend:
+    build: ./
+    container_name: ivdlms
+    networks:
+      - microservices-network
+    ports:
+      - "8081:8081"
+      - "19006:19006"
+    depends_on:
+      - discovery-server
+      - api-gateway
+      - microservice1
+      - microservice2
+      - microservice3
+      - microservice4
+      - microservice5
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ''
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+
+volumes:
+  postgres_data:
+

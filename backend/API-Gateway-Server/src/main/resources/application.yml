@@ -1,0 +1,49 @@
+server:
+  port: 8080
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+
+spring:
+  application:
+    name: Gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: person
+          uri: lb://PERSONAL-INFO
+          predicates:
+            - Path=/personal-info/**
+            
+        - id: vehicle
+          uri: lb://VEHICLE-INFO
+          predicates:
+            - Path=/vehicle-info/**
+
+        - id: registration
+          uri: lb://REGISTRATION
+          predicates:
+            - Path=/registrations/**
+
+        - id: registration
+          uri: lb://DRIVER-INFO
+          predicates:
+            - Path=/applicants/**
+
+        - id: quiz
+          uri: lb://QUIZ-INFO
+          predicates:
+            - Path=/quizzes/**
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
