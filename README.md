@@ -1,14 +1,23 @@
 **Integrated Vehicle and Driver Licence Management System (IVDLMS)**
 
-Table of Contents
+**Table of Contents**
+
 Introduction
+
 Features
+
 Tech Stack
+
 Architecture
+
 Installation
+
 Usage
+
 Docker Setup
+
 Database
+
 Contributing
 
 
